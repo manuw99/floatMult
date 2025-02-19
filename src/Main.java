@@ -81,13 +81,16 @@ public class Main {
         int stickyBit = 0;
         int ir_copy = ir;
 
+        // Check if number is negative
+        boolean isNegative = (ir < 0);
+
         // Perform a right shift on a copy of ir, setting the sticky bit if any non-zero bits are shifted out
         for (int i = 0; i < 23; i++) {
             stickyBit |= ir_copy & 1;
             ir_copy >>= 1;
         }
 
-        if (stickyBit != 0) { // If fractional part exists, then increment ir.
+        if (!isNegative && stickyBit != 0) { // If fractional part exists, then increment ir.
             return ir + 1;
         }
         return ir;
@@ -98,14 +101,17 @@ public class Main {
         int stickyBit = 0;
         int ir_copy = ir;
 
+        // Check if number is negative
+        boolean isNegative = (ir < 0);
+
         // Perform a right shift on a copy of ir, setting the sticky bit if any non-zero bits are shifted out
         for (int i = 0; i < 23; i++) {
             stickyBit |= ir_copy & 1;
             ir_copy >>= 1;
         }
 
-        if (stickyBit != 0) { // If fractional part exists, then increment ir.
-            return ir + 1;
+        if (isNegative && stickyBit != 0) { // If fractional part exists, then increment ir.
+            return ir - 1;
         }
         return ir;
     }
