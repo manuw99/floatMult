@@ -55,22 +55,25 @@ public class Main {
 
     public static int roundTowardZero(int ir) {
         int mantissa = ir & 0x007FFFFF; // Extract the mantissa
-        int exponent = ir & 0x7F800000; // Extract the exponent
+        int exponent = (ir & 0x7F800000) >> 23; // Extract the exponent
         int sign = ir & 0x80000000; // Extract the sign bit
 
-        // For normalized numbers
-        if (exponent != 0 && exponent != 0x7F800000) {
-            // Mask the mantissa to truncate to an integer
-            int shift = 23 - ((exponent >> 23) - 127); // Calculate how much we need to shift to get the integer part
-            if (shift > 0) {
+
+        if (exponent == 0) {
+            return ir; // Check subnormal, null before the calculation
+        }
+
+
+        // Mask the mantissa to truncate to an integer
+        int shift = 23 - (exponent - 127); // Calculate how much we need to shift to get the integer part
+        if (shift > 0) {
                 mantissa >>= shift; // Right shift to truncate
                 mantissa <<= shift; // Left shift back to original position
             }
-        }
-        // For subnormal numbers or zero, the mantissa is already rounded towards zero
+
         // For NaNs and infinities, we don't modify the mantissa
 
-        return sign | exponent | mantissa; // Recombine the components
+        return sign | (exponent << 23) | mantissa; // Recombine the components
     }
 
 
